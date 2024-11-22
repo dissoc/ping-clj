@@ -1,0 +1,45 @@
+#+TITLE:     ping-clj
+#+SUBTITLE:  simple wrapper for jnb-ping
+#+AUTHOR:    Justin Bishop
+#+KEYWORDS:  ping, clojure, native
+#+LANGUAGE:  en
+
+simple wrapper for the java jnb-ping library
+
+* Important
+
+This will only work with linux and possibly mac. You may need to make the
+following change:
+
+get your user's group id
+
+#+BEGIN_SRC sh :results output
+  id -g
+#+END_SRC
+
+and then run the following command using the group id (i.g. 10001)
+
+#+BEGIN_SRC sh :results output
+  sysctl net.ipv4.ping_group_range='10001 10001'
+#+END_SRC
+
+* Usage
+
+to use ping-clj require it then
+
+#+BEGIN_SRC clojure
+  (require [ping-clj.core :refer [ping]])
+
+  (ping "8.8.8.8"
+        :on-response println
+        :on-timeout println)
+#+END_SRC
+
+the response has structure with time being in seconds:
+
+#+BEGIN_SRC clojure
+  {:time      0.012602 ;; 12ms
+   :host      8.8.8.8
+   :icmp-seq  -17649
+   :num-bytes 64}
+#+END_SRC

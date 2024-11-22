@@ -22,16 +22,18 @@
                         "\n"))
           (on-response {:time      time-sec
                         :host      host
-                        :byte-seq  ping-seq
+                        :icmp-seq  ping-seq
                         :num-bytes byte-count}))))
     (onTimeout [this target]
       (if (nil? on-timeout)
         (println "timeout: " target)
         (on-timeout target)))))
 
-(defn ping [host]
+(defn ping [host & {:keys [on-response on-timeout]}]
   (let [inet-obj (InetAddress/getByName host)
-        pinger   (new IcmpPinger (response-handler))
+        pinger   (new IcmpPinger (response-handler
+                                  :on-response on-response
+                                  :on-timeout on-timeout))
         target   (new PingTarget inet-obj)]
     (future (try (.runSelector pinger)
                  (catch Exception e (println e))))
